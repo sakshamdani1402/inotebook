@@ -11,23 +11,23 @@ router.post('/createuser', [
 
     //u can put custom mssg after "email" in below method    
     body('email', 'Enter valid email').isEmail(),
-    body('name', 'Enter valid name').isLength({ min: 3 }),
+    body('name', 'Enter valid name').isLength({ min: 2 }),
 
     // password must be at least 5 chars long    
-    body('password', 'pasword shoould be min 8 characters').isLength({ min: 8 }),
+    body('password', 'pasword shoould be min 4 characters').isLength({ min: 4 }),
 ], async(req, res) => {
-
+    let success = false;
    //if the there are errors return bad request and the errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ success, errors: errors.array() });
     }
 
     //check if user with email already exists
     try {
         let user = await User.findOne({ email: req.body.email });
         if (user) {
-            return res.status(400).json({ error: "sorry user already exists" })
+            return res.status(400).json({success,  error: "sorry user already exists" })
         }
         const salt = await bcrypt.genSalt(10);
         const secPass = await bcrypt.hash(req.body.password, salt);
@@ -43,12 +43,12 @@ router.post('/createuser', [
             }
         }
         const authToken = jwt.sign(data,JWT_SECRET);
-        // res.send(user);
-        res.json({authToken});
+        success=true;
+        res.json({success, authToken});
 
     } catch (err) {
         console.log(err);
-        res.status(500).send("Internal server error");
+        res.status(500).send(success, "Internal server error");
     }
 })
 
@@ -60,10 +60,11 @@ router.post('/login', [
     // password exists    
     body('password', 'password cannot be blank').exists(),
 ], async(req, res) => {
+    let success = false;
     //if there are errors
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({ success, errors: errors.array() });
     }
     //destructure email and password from the req body
     const {email,password} = req.body;
@@ -81,7 +82,7 @@ router.post('/login', [
         const passwordCompare =await bcrypt.compare(password, user.password);
 
         if(!passwordCompare){
-            return res.status(400).json({
+            return res.status(400).json({ success, 
                 error:"Login with correct credentials"
             });
         }
@@ -93,7 +94,8 @@ router.post('/login', [
         }
         // sign auth token with data(user id) and the JWT_SECRET
         const authToken = jwt.sign(data,JWT_SECRET);
-        res.json({authToken});
+        success = true;
+        res.json({success, authToken});
     } catch (error) {
         console.log(err);
         res.status(500).send("Internal server error");
