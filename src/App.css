@@ -40,3 +40,33 @@
 i{
   cursor: pointer;
 }
+
+.login-page , .signup-page{
+  height: 70%;
+  padding: 5%;
+  border-radius: 50px;
+  background: #ffffff;
+  box-shadow:  20px 20px 60px #d9d9d9,
+             -20px -20px 60px #ffffff;
+}
+
+.login-image *,.signup-img *{
+  height: 100%;
+  width: 75%;
+}
+
+.add-note-container{
+  padding: 5%;
+  border-radius: 50px;
+  background: #ffffff;
+  box-shadow:  20px 20px 60px #d9d9d9,
+             -20px -20px 60px #ffffff;
+}
+
+.note-item-card{
+  padding: 5%;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow:  20px 20px 60px #d9d9d9,
+             -20px -20px 60px #ffffff;
+}

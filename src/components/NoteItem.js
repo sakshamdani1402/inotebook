@@ -5,7 +5,7 @@ const NoteItem = (props) => {
     const {deleteNote} = context;
     const { note, updateNote } = props;
     return <div className='col-md-4 my-3'>
-        <div className="card">
+        <div className="card note-item-card">
             <div className="card-body">
                 <div className="d-flex align-items-center">
                     <h5 className="card-title">{note.title}</h5>

@@ -14,7 +14,7 @@ const AddNote = (props) => {
     const onChange = (e) =>{
         setNote({...note, [e.target.name] : e.target.value})
     }
-    return <div className="container my-4">
+    return <div className="container my-4 add-note-container">
         <h1>Add a note</h1>
         <form>
             <div className="mb-3">
