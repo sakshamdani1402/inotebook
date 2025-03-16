@@ -171,3 +171,67 @@ Authentication is handled using JSON Web Tokens (JWT). When a user logs in, a to
    yarn start
    ```
 3. Open [http://localhost:3000](http://localhost:3000) to view the application in the browser.
+
+-------------------------------------------
+
+The `auth.js` file in the `backend/routes` directory of the `inotebook` repository defines three main routes for user authentication. Here's a summary of each route:
+
+1. **Create a User** (`POST /api/auth/createuser`):
+   - Validates the input fields (`email`, `name`, and `password`).
+   - Checks if a user with the provided email already exists.
+   - If not, hashes the password using bcrypt and creates a new user.
+   - Generates a JWT token for the newly created user and returns it in the response.
+
+2. **Authenticate a User** (`POST /api/auth/login`):
+   - Validates the input fields (`email` and `password`).
+   - Checks if a user with the provided email exists.
+   - Verifies the provided password against the stored hashed password.
+   - If valid, generates a JWT token for the user and returns it in the response.
+
+3. **Get Logged-in User Details** (`POST /api/auth/getuser`):
+   - Requires a valid JWT token to access.
+   - Fetches the authenticated user's details (excluding the password) and returns them in the response.
+
+These routes use various middleware and libraries such as `express-validator` for input validation, `bcryptjs` for password hashing, and `jsonwebtoken` for JWT token generation and verification.
+
+------------------------------------
+This file, `notes.js`, defines various routes for managing notes in an Express.js application. Here is a breakdown of the functionalities provided by this file:
+
+1. **Dependencies and Middleware**:
+   - `express` is used to create the router.
+   - `fetchuser` middleware is used to authenticate users.
+   - `Note` is the model representing notes in the database.
+   - `express-validator` is used for validating request inputs.
+
+2. **Routes**:
+   - **Get All Notes** (`GET /api/notes/fetchallnotes`):
+     Fetches all notes for the authenticated user.
+     ```javascript
+     router.get('/fetchallnotes', fetchuser, async (req, res) => { ... });
+     ```
+
+   - **Add a New Note** (`POST /api/notes/addnote`):
+     Adds a new note for the authenticated user. Validates the input for title and description.
+     ```javascript
+     router.post('/addnote', fetchuser, [
+       body('title', 'Enter valid title').isLength({ min: 3 }),
+       body('description', 'Enter valid name').isLength({ min: 5 })
+     ], async (req, res) => { ... });
+     ```
+
+   - **Update an Existing Note** (`PUT /api/notes/update/:id`):
+     Updates an existing note. The note must belong to the authenticated user. Only the provided fields (title, description, tag) are updated.
+     ```javascript
+     router.put('/update/:id', fetchuser, async (req, res) => { ... });
+     ```
+
+   - **Delete an Existing Note** (`DELETE /api/notes/delete/:id`):
+     Deletes an existing note. The note must belong to the authenticated user.
+     ```javascript
+     router.delete('/delete/:id', fetchuser, async (req, res) => { ... });
+     ```
+
+3. **Error Handling**:
+   - Each route includes a try-catch block to handle errors and send a 500 status code with an "Internal server error" message if something goes wrong.
+
+For more details, you can view the file [here](https://github.com/sakshamdani1402/inotebook/blob/3946ce8a73bda30bb656785b657a503fca806dec/backend/routes/notes.js).
