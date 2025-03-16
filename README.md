@@ -171,7 +171,35 @@ Authentication is handled using JSON Web Tokens (JWT). When a user logs in, a to
    yarn start
    ```
 3. Open [http://localhost:3000](http://localhost:3000) to view the application in the browser.
+-----------------------
+The `index.js` file in the `backend` directory sets up the backend server for the iNotebook application. Here's a breakdown of what each part of the file does:
 
+1. **Imports dependencies**:
+   - `connnectToMongo`: A function to connect to the MongoDB database defined in the `db.js` file.
+   - `cors`: Middleware to enable Cross-Origin Resource Sharing.
+   - `express`: A web framework for Node.js.
+
+2. **Initializes the Express app**:
+   - Creates an instance of an Express application with `express()`.
+
+3. **Connects to the MongoDB database**:
+   - Calls `connnectToMongo()` to connect to the database.
+
+4. **Sets the port**:
+   - Defines the port number as `5000`.
+
+5. **Middleware setup**:
+   - `app.use(express.json())`: Middleware to parse JSON bodies of incoming requests.
+   - `app.use(cors())`: Middleware to enable CORS.
+
+6. **Defines routes**:
+   - `app.use('/api/auth', require('./routes/auth'))`: Sets up the `/api/auth` route to handle authentication-related requests.
+   - `app.use('/api/notes', require('./routes/notes'))`: Sets up the `/api/notes` route to handle notes-related requests.
+
+7. **Starts the server**:
+   - `app.listen(port, () => { console.log(`iNotebook backend listening at http://localhost:${port}`) })`: Starts the server and listens on the specified port, logging a message to the console when the server is running.
+
+Overall, this file configures and starts the backend server for the iNotebook application, setting up middleware and routes to handle API requests.
 -------------------------------------------
 
 The `auth.js` file in the `backend/routes` directory of the `inotebook` repository defines three main routes for user authentication. Here's a summary of each route:
@@ -235,3 +263,50 @@ This file, `notes.js`, defines various routes for managing notes in an Express.j
    - Each route includes a try-catch block to handle errors and send a 500 status code with an "Internal server error" message if something goes wrong.
 
 For more details, you can view the file [here](https://github.com/sakshamdani1402/inotebook/blob/3946ce8a73bda30bb656785b657a503fca806dec/backend/routes/notes.js).
+------------------------------
+The `fetchuser.js` file is a middleware function used in a Node.js application to authenticate users using JSON Web Tokens (JWT). Here is a breakdown of the file:
+
+1. **Importing the `jsonwebtoken` module:**
+   ```javascript
+   const jwt = require('jsonwebtoken');
+   ```
+
+2. **Defining a secret key for JWT:**
+   ```javascript
+   const JWT_SECRET = "sakshamisagoodboy";
+   ```
+
+3. **Creating the `fetchuser` middleware function:**
+   ```javascript
+   const fetchuser = (req, res, next) => {
+   ```
+
+4. **Extracting the token from the request header:**
+   ```javascript
+   const token = req.header('auth-token');
+   if (!token) {
+       res.status(401).send({ error: "Please authenticate using a valid token" });
+   }
+   ```
+
+5. **Verifying the token and extracting user data:**
+   ```javascript
+   try {
+       const data = jwt.verify(token, JWT_SECRET);
+       req.user = data.user;
+       next();
+   } catch (error) {
+       res.status(401).send({ error: "Please authenticate using a valid token" });
+   }
+   ```
+
+6. **Exporting the `fetchuser` function for use in other parts of the application:**
+   ```javascript
+   module.exports = fetchuser;
+   ```
+
+### Summary
+- The `fetchuser` middleware extracts the JWT from the request header.
+- It verifies the token using a secret key (`JWT_SECRET`).
+- If the token is valid, it attaches the user information to the `req` object and calls the `next` function to proceed to the next middleware.
+- If the token is invalid or missing, it sends a 401 Unauthorized response.
